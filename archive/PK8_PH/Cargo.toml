@@ -1,0 +1,64 @@
+# Cargo.toml
+[package]
+name = "pair_arb_backtester"
+version = "0.1.0"
+edition = "2021"
+default-run = "live_console"
+
+[[bin]]
+name = "optimizer"
+path = "src/bin/optimizer.rs"
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
+rand = "0.8"
+rand_distr = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+plotters = "0.3"
+futures-util = "0.3"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "time"] }
+tokio-tungstenite = { version = "0.26", features = ["rustls-tls-webpki-roots"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "time"] }
+url = "2"
+ratatui = "0.29"
+crossterm = "0.28"
+polymarket-rs = { git = "https://github.com/pawsengineer/polymarket-rs.git" }
+rust_decimal = "1"
+dotenvy = "0.15"
+ctrlc = "3.4"
+
+[[bin]]
+name = "live_console"
+path = "src/bin/live_console.rs"
+
+[[bin]]
+name = "price_recorder"
+path = "src/bin/price_recorder.rs"
+
+[[bin]]
+name = "lead_lag_analyzer"
+path = "src/bin/lead_lag_analyzer.rs"
+
+[[bin]]
+name = "correlation_analyzer"
+path = "src/bin/correlation_analyzer.rs"
+
+[[bin]]
+name = "multi_signal_recorder"
+path = "src/bin/multi_signal_recorder.rs"
+
+[[bin]]
+name = "verify_settlements"
+path = "src/bin/verify_settlements.rs"
+
+[[bin]]
+name = "replay_realism"
+path = "src/bin/replay_realism.rs"
+
+[[bin]]
+name = "canary_console"
+path = "src/bin/canary_console.rs"

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JUMP01X - State of Project</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .section h2 {
+            color: #00ff88;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-box .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        .stat-box .label {
+            font-size: 0.8em;
+            color: #888;
+            margin-top: 5px;
+        }
+        .stat-box.winner .value { color: #ffd700; }
+        .stat-box.negative .value { color: #ff4444; }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        th {
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            font-weight: 600;
+        }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+        .positive { color: #00ff88; }
+        .negative { color: #ff4444; }
+        .winner-cell { background: rgba(255, 215, 0, 0.1); color: #ffd700; }
+
+        /* Price Bucket Chart */
+        .bucket-chart {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .bucket {
+            flex: 1;
+            min-width: 120px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .bucket .range { font-size: 0.9em; color: #00d4ff; margin-bottom: 10px; }
+        .bucket .ev {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .bucket .ev.positive { color: #00ff88; }
+        .bucket .ev.negative { color: #ff4444; }
+        .bucket .wr { font-size: 0.9em; color: #888; }
+        .bucket .bar {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .bucket .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        .bucket.strong-positive .bar-fill { background: linear-gradient(90deg, #00ff88, #00cc6a); }
+        .bucket.positive .bar-fill { background: linear-gradient(90deg, #00d4ff, #0099cc); }
+        .bucket.marginal .bar-fill { background: linear-gradient(90deg, #ffaa00, #cc8800); }
+        .bucket.negative .bar-fill { background: linear-gradient(90deg, #ff4444, #cc0000); }
+
+        /* TL;DR Box */
+        .tldr {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .tldr h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            border-bottom: none;
+        }
+        .tldr ol {
+            margin-left: 20px;
+            line-height: 2;
+        }
+        .tldr li { margin-bottom: 5px; }
+
+        /* Command Box */
+        .command-box {
+            background: #0d0d0d;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .command-box code {
+            color: #00ff88;
+            font-size: 0.9em;
+        }
+
+        /* Comparison Arrow */
+        .comparison {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 20px 0;
+        }
+        .comparison .strategy {
+            text-align: center;
+            padding: 20px;
+            border-radius: 12px;
+            min-width: 200px;
+        }
+        .comparison .strategy.baseline {
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid #666;
+        }
+        .comparison .strategy.rule_v1 {
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #ffd700;
+        }
+        .comparison .strategy .name {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .comparison .strategy .pnl {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        .comparison .arrow {
+            font-size: 2em;
+            color: #00ff88;
+        }
+
+        /* Status indicator */
+        .status-running {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            border-radius: 20px;
+            color: #00ff88;
+            font-size: 0.9em;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .missing-item {
+            background: rgba(255, 68, 68, 0.1);
+            border-left: 3px solid #ff4444;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .action-item {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid #00d4ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .action-item .number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #00d4ff;
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div style="background: #ff6b35; color: #000; padding: 12px 20px; text-align: center; font-weight: bold; font-family: sans-serif;">
+        ARCHIVE - This is historical data from the Rust/A-B test phase. Current system: RULEV3+ Phase 1 (Python). See PHASE1_LOCKED.md
+    </div>
+    <div class="container">
+        <h1>JUMP01X</h1>
+        <p class="subtitle">State of Project | 2025-12-21 16:15 UTC | Run: 20251221_0949_AB_V3 (~7h) <span class="status-running">ARCHIVED</span></p>
+
+        <!-- Current Stats -->
+        <div class="section">
+            <h2>1. CURRENT PERFORMANCE</h2>
+
+            <div class="comparison">
+                <div class="strategy baseline">
+                    <div class="name">paper_baseline</div>
+                    <div class="pnl" style="color: #00ff88;">+$0.85</div>
+                    <div style="color: #888; margin-top: 5px;">64% WR | 25 fills</div>
+                </div>
+                <div class="arrow">vs</div>
+                <div class="strategy rule_v1">
+                    <div class="name" style="color: #ffd700;">rule_v1 (WINNER)</div>
+                    <div class="pnl" style="color: #ffd700;">+$1.19</div>
+                    <div style="color: #888; margin-top: 5px;">65% WR | 26 fills</div>
+                </div>
+            </div>
+
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>paper_baseline</th>
+                    <th>rule_v1</th>
+                    <th>Winner</th>
+                </tr>
+                <tr>
+                    <td>Win Rate</td>
+                    <td>64%</td>
+                    <td class="positive">65%</td>
+                    <td class="winner-cell">rule_v1</td>
+                </tr>
+                <tr>
+                    <td>Net P&L</td>
+                    <td class="positive">+$0.85</td>
+                    <td class="positive">+$1.19</td>
+                    <td class="winner-cell">rule_v1</td>
+                </tr>
+                <tr>
+                    <td>EV/trade</td>
+                    <td>+$0.034</td>
+                    <td class="positive">+$0.046</td>
+                    <td class="winner-cell">rule_v1</td>
+                </tr>
+                <tr>
+                    <td>Profit Factor</td>
+                    <td>1.15</td>
+                    <td class="positive">1.20</td>
+                    <td class="winner-cell">rule_v1</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Where Edge Comes From -->
+        <div class="section">
+            <h2>2. WHERE EDGE COMES FROM</h2>
+            <p style="margin-bottom: 20px; color: #00d4ff;">Edge is in <strong>price discipline</strong>: buy cheap, skip expensive.</p>
+
+            <div class="bucket-chart">
+                <div class="bucket positive">
+                    <div class="range">$0.50 - $0.54</div>
+                    <div class="ev positive">+$0.48</div>
+                    <div class="wr">100% WR | n=1</div>
+                    <div class="bar"><div class="bar-fill" style="width: 100%;"></div></div>
+                </div>
+                <div class="bucket strong-positive">
+                    <div class="range">$0.54 - $0.58</div>
+                    <div class="ev positive">+$0.35</div>
+                    <div class="wr">88% WR | n=18</div>
+                    <div class="bar"><div class="bar-fill" style="width: 88%;"></div></div>
+                </div>
+                <div class="bucket negative">
+                    <div class="range">$0.58 - $0.64</div>
+                    <div class="ev negative">-$0.08</div>
+                    <div class="wr">52% WR | n=23</div>
+                    <div class="bar"><div class="bar-fill" style="width: 52%;"></div></div>
+                </div>
+                <div class="bucket negative">
+                    <div class="range">$0.64+</div>
+                    <div class="ev negative">-$0.31</div>
+                    <div class="wr">44% WR | n=9</div>
+                    <div class="bar"><div class="bar-fill" style="width: 44%;"></div></div>
+                </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                <strong style="color: #ffd700;">KEY UPDATE:</strong> Price gate should be at <strong style="color: #00ff88;">$0.58</strong>, not $0.64!<br>
+                Below $0.58: 88% WR, <span class="positive">+$0.35/trade</span>.<br>
+                At $0.58+: 50% WR, <span class="negative">-$0.15/trade</span>.
+            </div>
+        </div>
+
+        <!-- What We Don't Know -->
+        <div class="section">
+            <h2>3. GAPS (What We Can't Simulate Yet)</h2>
+
+            <div class="missing-item">
+                <strong>Signal Invalidation Stops</strong><br>
+                Missing per-tick: cvd, orderbook_imbalance, consensus counts, best_bid
+            </div>
+
+            <div class="missing-item">
+                <strong>Slippage vs Mid</strong><br>
+                Missing: up_mid, dn_mid at entry time
+            </div>
+
+            <p style="margin-top: 15px; color: #888;">
+                To enable: Add <code>ticks_1s.jsonl</code> with bid/ask/cvd/ob/consensus every 1s
+            </p>
+        </div>
+
+        <!-- Next Actions -->
+        <div class="section">
+            <h2>4. NEXT ACTIONS</h2>
+
+            <div class="action-item">
+                <span class="number">1</span>
+                <strong>Continue Current Run</strong><br>
+                <span style="color: #888;">Goal: 50 fills/strategy (currently 25-26). ~3-4 more hours. Do NOT change params.</span>
+            </div>
+
+            <div class="action-item">
+                <span class="number">2</span>
+                <strong>Run Analyzer When Done</strong><br>
+                <span style="color: #888;">Save summary stats to RUN_DIR</span>
+            </div>
+
+            <div class="action-item">
+                <span class="number">3</span>
+                <strong>Next Run: Add Price Gate at $0.58</strong><br>
+                <span style="color: #888;">Skip entries where best_ask >= $0.58 (break-even point, not 0.64!)</span>
+            </div>
+        </div>
+
+        <!-- Commands -->
+        <div class="section">
+            <h2>5. QUICK COMMANDS</h2>
+
+            <p style="margin-bottom: 10px; color: #00d4ff;">Check FILL counts:</p>
+            <div class="command-box">
+                <code>grep -c '"action":"FILL"' /Users/jumperz/PROJES/JUMP01X/PK8_PH/logs/runs/20251221_0949_AB_V3/orders_*.jsonl</code>
+            </div>
+
+            <p style="margin-bottom: 10px; color: #00d4ff;">Quick P&L check (rule_v1):</p>
+            <div class="command-box">
+                <code>cat orders_rule_v1.jsonl | jq -s '[.[] | select(.action == "FILL")] | {wins: [.[] | select(.outcome == "up")] | length, losses: [.[] | select(.outcome == "down")] | length}'</code>
+            </div>
+        </div>
+
+        <!-- TL;DR -->
+        <div class="tldr">
+            <h2>TL;DR</h2>
+            <ol>
+                <li><strong style="color: #00ff88;">Edge is real but thin:</strong> 65% WR, +$0.04/trade EV, profit factor 1.2</li>
+                <li><strong style="color: #ffd700;">UPDATED Edge source:</strong> Below $0.58 = 88% WR, +$0.35/trade. At $0.58+ = 50% WR, -$0.15/trade</li>
+                <li><strong style="color: #ffd700;">rule_v1 winning:</strong> 65% WR vs 64%, +$1.19 vs +$0.85</li>
+                <li><strong style="color: #00d4ff;">Next move:</strong> Run to 50 fills, then add price gate at <strong>$0.58</strong> (not 0.64!)</li>
+                <li><strong style="color: #888;">Optional:</strong> Add per-tick signals for invalidation stop simulation</li>
+            </ol>
+        </div>
+
+        <p style="text-align: center; margin-top: 30px; color: #555; font-size: 0.9em;">
+            Generated by Claude | Data from 20251221_0949_AB_V3
+        </p>
+    </div>
+</body>
+</html>

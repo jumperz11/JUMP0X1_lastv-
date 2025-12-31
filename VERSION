@@ -1,0 +1,11 @@
+RULEV3+ Phase 1.2
+Tag: v3.2.0
+Date: 2025-12-31T00:00:00Z
+Config: SPREAD-0.02-EDGE-0.64-CAP-0.68-CORE-ONLY-KILLSWITCH-OFF
+Status: LOCKED
+
+Changes from v1.0:
+- ask_cap: 0.72 -> 0.68 (sweep optimized)
+- kill_switch: L=3 -> OFF (proven edge destroyer)
+- Research: 300 configs tested, 6-phase survivability validated
+- See: docs/RESEARCH_REPORT_2025-12-31.md

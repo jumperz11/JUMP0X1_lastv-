@@ -1,0 +1,8 @@
+*markets_paper*
+*logs*
+*trash*
+.env
+target/
+__pycache__/
+*.pyc
+*.json

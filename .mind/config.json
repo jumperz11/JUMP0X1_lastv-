@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "mascot": true,
+  "logging": {
+    "level": "balanced",
+    "auto_categorize": true
+  },
+  "session": {
+    "auto_promote": true,
+    "promote_threshold": 0.5
+  },
+  "memory": {
+    "retention_mode": "smart",
+    "decay_period_days": 30,
+    "decay_rate": 0.1,
+    "min_relevance": 0.2
+  },
+  "health": {
+    "auto_repair": true
+  },
+  "stack": {
+    "detected": "claude-code",
+    "config_file": "CLAUDE.md"
+  },
+  "self_improve": {
+    "enabled": true,
+    "decay": true,
+    "reinforcement": true,
+    "contradiction": true,
+    "learning_style": true
+  }
+}

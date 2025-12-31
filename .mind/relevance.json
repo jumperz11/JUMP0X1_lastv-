@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "entries": {
+    "76cf4664": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T03:48:12.215280",
+      "access_count": 1,
+      "created": "2025-12-21T03:48:12.215280",
+      "preview": "fixed: Fixed CONSENSUS to show \"DOWN (0% UP)\" form"
+    },
+    "f53263ae": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T03:48:12.215610",
+      "access_count": 1,
+      "created": "2025-12-21T03:48:12.215610",
+      "preview": "speed bump, 5) Sub-200ms infrastructure needed"
+    },
+    "77db4db1": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T03:48:12.215723",
+      "access_count": 1,
+      "created": "2025-12-21T03:48:12.215723",
+      "preview": "learned: CRITICAL ALPHA from Telegram: 1) Binance "
+    },
+    "86db74fc": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T15:56:49.040515",
+      "access_count": 1,
+      "created": "2025-12-21T15:56:49.040515",
+      "preview": "decided: PROJECT: JUMP01X (Polymarket arbitrage bo"
+    },
+    "81c676a2": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T15:56:49.040814",
+      "access_count": 1,
+      "created": "2025-12-21T15:56:49.040814",
+      "preview": "fixed: Created STATE.md in docs/ - comprehensive p"
+    },
+    "2f711363": {
+      "score": 1.0,
+      "last_accessed": "2025-12-21T15:56:49.040937",
+      "access_count": 1,
+      "created": "2025-12-21T15:56:49.040937",
+      "preview": "learned: TEST1 ENTRY INSIGHT: 0.46-0.48 price rang"
+    },
+    "8f99621f": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:12:04.158183",
+      "access_count": 1,
+      "created": "2025-12-22T01:12:04.158183",
+      "preview": "learned: Lead-lag analyzer v2.0: Event ordering, n"
+    },
+    "2080d36d": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:12:04.158693",
+      "access_count": 1,
+      "created": "2025-12-22T01:12:04.158693",
+      "preview": "50-100 events before drawing conclusions"
+    },
+    "deb590e0": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:12:04.158862",
+      "access_count": 1,
+      "created": "2025-12-22T01:12:04.158862",
+      "preview": "learned: Lead-lag analyzer bug caught and fixed. K"
+    },
+    "dc3e4489": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:29:54.877813",
+      "access_count": 1,
+      "created": "2025-12-22T01:29:54.877813",
+      "preview": "fixed: Completed all 4 lead engineer tasks: (1) mu"
+    },
+    "3196cf89": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:29:54.878117",
+      "access_count": 1,
+      "created": "2025-12-22T01:29:54.878117",
+      "preview": "learned: CORRECTION: rule_v1 is DIRECTIONAL strate"
+    },
+    "c4dfcbd1": {
+      "score": 1.0,
+      "last_accessed": "2025-12-22T01:29:54.878269",
+      "access_count": 1,
+      "created": "2025-12-22T01:29:54.878269",
+      "preview": "decided: Added price gate rule to rule_v1: skip if"
+    }
+  }
+}
