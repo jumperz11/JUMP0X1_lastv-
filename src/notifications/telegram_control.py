@@ -7,21 +7,22 @@ Commands:
   /status     - View current state
   /pnl        - PnL summary
   /btc        - View UP token 5m trend
-  /logs       - Show log options
-  /logs paper - Upload latest paper log
-  /logs real  - Upload latest real log
+  /list       - Show all logs
+  /paper      - Get paper log
+  /real       - Get real log
+  /1 /2..     - Pick from list
   /kill       - Flip EXECUTION_ENABLED to False
 
 Env:
   TELEGRAM_ENABLED=1
   TELEGRAM_BOT_TOKEN=xxx
-  TELEGRAM_CHAT_ID=xxx
+  TELEGRAM_CHAT_ID=xxx,yyy  (comma-separated for multiple chats/groups)
 """
 
 import os
 import time
 import requests
-from typing import Optional
+from typing import Optional, List
 from pathlib import Path
 
 # =============================================================================
@@ -30,7 +31,9 @@ from pathlib import Path
 
 TELEGRAM_ENABLED = os.getenv("TELEGRAM_ENABLED", "0") == "1"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+_raw_chat_ids = os.getenv("TELEGRAM_CHAT_ID", "")
+# Support multiple chat IDs (comma-separated)
+TELEGRAM_CHAT_IDS: List[str] = [cid.strip() for cid in _raw_chat_ids.split(",") if cid.strip()]
 
 # =============================================================================
 # SHARED STATE (set by dashboard, read by telegram)
@@ -86,17 +89,19 @@ def _poll_updates() -> list:
     return []
 
 
-def _send(text: str):
-    """Send message to user."""
-    try:
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
-        requests.post(url, json={
-            "chat_id": TELEGRAM_CHAT_ID,
-            "text": text,
-            "parse_mode": "HTML"
-        }, timeout=5)
-    except:
-        pass
+def _send(text: str, chat_id: str = None):
+    """Send message to one or all authorized chats."""
+    targets = [chat_id] if chat_id else TELEGRAM_CHAT_IDS
+    for cid in targets:
+        try:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+            requests.post(url, json={
+                "chat_id": cid,
+                "text": text,
+                "parse_mode": "HTML"
+            }, timeout=5)
+        except:
+            pass
 
 
 # =============================================================================
@@ -251,21 +256,24 @@ def _get_latest_log(log_type: str) -> Optional[Path]:
 
 
 def _send_file(file_path: Path, caption: str = ""):
-    """Send a file via Telegram."""
-    try:
-        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument"
+    """Send a file via Telegram to all authorized chats."""
+    success = False
+    for chat_id in TELEGRAM_CHAT_IDS:
+        try:
+            url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument"
 
-        with open(file_path, 'rb') as f:
-            files = {'document': (file_path.name, f)}
-            data = {'chat_id': TELEGRAM_CHAT_ID}
-            if caption:
-                data['caption'] = caption
+            with open(file_path, 'rb') as f:
+                files = {'document': (file_path.name, f)}
+                data = {'chat_id': chat_id}
+                if caption:
+                    data['caption'] = caption
 
-            resp = requests.post(url, files=files, data=data, timeout=30)
-            return resp.status_code == 200
-    except Exception as e:
-        _send(f"Error uploading file: {str(e)[:100]}")
-        return False
+                resp = requests.post(url, files=files, data=data, timeout=30)
+                if resp.status_code == 200:
+                    success = True
+        except Exception as e:
+            _send(f"Error uploading file: {str(e)[:100]}", chat_id)
+    return success
 
 
 def _get_all_logs(log_type: str, limit: int = 5):
@@ -382,8 +390,8 @@ def _send_tail(file_path: Path, max_bytes: int, log_type: str):
 
 def _handle(text: str, chat_id: str):
     """Handle incoming command."""
-    if str(chat_id) != str(TELEGRAM_CHAT_ID):
-        return  # Ignore other users
+    if str(chat_id) not in TELEGRAM_CHAT_IDS:
+        return  # Ignore unauthorized chats
 
     text = text.strip()
     cmd = text.lower()
@@ -468,10 +476,11 @@ def stop():
 
 def _reload_config():
     """Reload config from environment (for testing)."""
-    global TELEGRAM_ENABLED, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+    global TELEGRAM_ENABLED, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_IDS
     TELEGRAM_ENABLED = os.getenv("TELEGRAM_ENABLED", "0") == "1"
     TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
-    TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
+    _raw = os.getenv("TELEGRAM_CHAT_ID", "")
+    TELEGRAM_CHAT_IDS = [cid.strip() for cid in _raw.split(",") if cid.strip()]
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ Rate-limited: max 1 msg/sec, de-dupe for 10s
 Env vars:
   TELEGRAM_ENABLED=1       # Enable/disable
   TELEGRAM_BOT_TOKEN=xxx   # Bot token from @BotFather
-  TELEGRAM_CHAT_ID=xxx     # Your chat ID
+  TELEGRAM_CHAT_ID=xxx,yyy # Chat IDs (comma-separated for multiple)
 """
 
 import os
@@ -17,19 +17,21 @@ import time
 import hashlib
 import threading
 import requests
-from typing import Optional
+from typing import Optional, List
 from functools import wraps
 
 
 class TelegramNotifier:
     """
     Minimal Telegram notifier with rate limiting and de-duplication.
+    Supports multiple chat IDs (personal + groups).
     """
 
     def __init__(self):
         self.enabled = os.getenv("TELEGRAM_ENABLED", "0") == "1"
         self.bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "")
-        self.chat_id = os.getenv("TELEGRAM_CHAT_ID", "")
+        _raw_ids = os.getenv("TELEGRAM_CHAT_ID", "")
+        self.chat_ids: List[str] = [cid.strip() for cid in _raw_ids.split(",") if cid.strip()]
 
         # Rate limiting
         self._last_send_time: float = 0
@@ -44,7 +46,7 @@ class TelegramNotifier:
         self._lock = threading.Lock()
 
         # Validate config
-        if self.enabled and (not self.bot_token or not self.chat_id):
+        if self.enabled and (not self.bot_token or not self.chat_ids):
             print("[TELEGRAM] WARNING: Enabled but missing BOT_TOKEN or CHAT_ID")
             self.enabled = False
 
@@ -94,31 +96,35 @@ class TelegramNotifier:
             if wait_time > 0:
                 time.sleep(wait_time)
 
-            # Send
-            try:
-                url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
-                payload = {
-                    "chat_id": self.chat_id,
-                    "text": msg,
-                    "parse_mode": "HTML",
-                    "disable_notification": False,
-                }
+            # Send to all chat IDs
+            success = False
+            for chat_id in self.chat_ids:
+                try:
+                    url = f"https://api.telegram.org/bot{self.bot_token}/sendMessage"
+                    payload = {
+                        "chat_id": chat_id,
+                        "text": msg,
+                        "parse_mode": "HTML",
+                        "disable_notification": False,
+                    }
 
-                response = requests.post(url, json=payload, timeout=5)
+                    response = requests.post(url, json=payload, timeout=5)
 
-                if response.status_code == 200:
-                    # Update state
-                    self._last_send_time = time.time()
-                    self._last_msg_hash = self._get_hash(msg)
-                    self._last_msg_time = time.time()
-                    return True
-                else:
-                    print(f"[TELEGRAM] Failed: {response.status_code} {response.text[:100]}")
-                    return False
+                    if response.status_code == 200:
+                        success = True
+                    else:
+                        print(f"[TELEGRAM] Failed ({chat_id}): {response.status_code}")
 
-            except Exception as e:
-                print(f"[TELEGRAM] Error: {e}")
-                return False
+                except Exception as e:
+                    print(f"[TELEGRAM] Error ({chat_id}): {e}")
+
+            # Update state after sending to all
+            if success:
+                self._last_send_time = time.time()
+                self._last_msg_hash = self._get_hash(msg)
+                self._last_msg_time = time.time()
+
+            return success
 
 
 # =============================================================================
