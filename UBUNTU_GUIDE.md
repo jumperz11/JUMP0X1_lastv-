@@ -36,8 +36,8 @@ TRADING_MODE=paper
 EXECUTION_ENABLED=false
 MAX_LIVE_TRADES_PER_RUN=0
 PM_PRIVATE_KEY=YOUR_PRIVATE_KEY_HERE
-PM_WALLET_ADDRESS=0x960dDf6881278d543c7194b74bEdb107751b73fB
-PM_FUNDER_ADDRESS=0x960dDf6881278d543c7194b74bEdb107751b73fB
+PM_WALLET_ADDRESS=YOUR_POLYMARKET_PROXY_WALLET
+PM_FUNDER_ADDRESS=YOUR_POLYMARKET_PROXY_WALLET
 PM_SIGNATURE_TYPE=1
 PM_POLYGON_RPC_URL=https://polygon-rpc.com
 PM_USDC_CONTRACT=0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359
@@ -47,8 +47,8 @@ PM_EDGE_THRESHOLD=0.64
 PM_SAFETY_CAP=0.68
 PM_ZONE_MODE=T3-only
 TELEGRAM_ENABLED=1
-TELEGRAM_BOT_TOKEN=7703096771:AAF8jKZXsv8AvIts2Z1dMBz-H5ndzTLh_wI
-TELEGRAM_CHAT_ID=511828670
+TELEGRAM_BOT_TOKEN=YOUR_BOT_TOKEN
+TELEGRAM_CHAT_ID=YOUR_CHAT_ID
 BTC_TREND_TAG_ENABLED=1
 ```
 
@@ -138,8 +138,8 @@ git log -1 --oneline
 ## Test Telegram Bot
 
 ```bash
-curl -s -X POST "https://api.telegram.org/bot7703096771:AAF8jKZXsv8AvIts2Z1dMBz-H5ndzTLh_wI/sendMessage" \
-  -d "chat_id=511828670" \
+curl -s -X POST "https://api.telegram.org/botYOUR_BOT_TOKEN/sendMessage" \
+  -d "chat_id=YOUR_CHAT_ID" \
   -d "text=Bot test from Ubuntu"
 ```
 
@@ -151,13 +151,13 @@ To add bot to a Telegram group:
 2. Send `/start` in group
 3. Get group ID:
 ```bash
-curl "https://api.telegram.org/bot7703096771:AAF8jKZXsv8AvIts2Z1dMBz-H5ndzTLh_wI/getUpdates"
+curl "https://api.telegram.org/botYOUR_BOT_TOKEN/getUpdates"
 ```
 Look for: `"chat":{"id":-100xxxxxxxxxx`
 
 4. Update `.env`:
 ```
-TELEGRAM_CHAT_ID=511828670,-100YOUR_GROUP_ID
+TELEGRAM_CHAT_ID=YOUR_CHAT_ID,-100YOUR_GROUP_ID
 ```
 
 ## Trading Modes
