@@ -441,7 +441,7 @@ def start():
     if not TELEGRAM_ENABLED:
         return
 
-    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_IDS:
         print("[TELEGRAM] Missing token or chat_id")
         return
 
